@@ -1,13 +1,13 @@
-'use client'
-
-import { supabase } from "@/lib/supabaseClient"
-
-export default function Login() {
-    const signIn = async () => {
-        await supabase.auth.signInWithOAuth({ provider: "google" })
-    }
-
-    return (
-        <button onClick={signIn}>Sign in with Google</button>
-    )
+import { login, signup } from './actions'
+export default function LoginPage() {
+  return (
+    <form>
+      <label htmlFor="email">Email:</label>
+      <input id="email" name="email" type="email" required />
+      <label htmlFor="password">Password:</label>
+      <input id="password" name="password" type="password" required />
+      <button formAction={login}>Log in</button>
+      <button formAction={signup}>Sign up</button>
+    </form>
+  )
 }
