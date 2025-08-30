@@ -34,7 +34,14 @@ const passwordSchema = z
 
 const formSchema = z.object({
   email: z.string().email(),
+  firstName: z.string().min(2, "First name must be at least 2 characters").max(20, "First name must be at most 20 characters"),
+  lastName: z.string().min(2, "Last name must be at least 2 characters").max(20, "Last name must be at most 20 characters"),
   password: passwordSchema,
+  confirmPassword: z.string(),
+})
+.refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords must match",
+  path: ["confirmPassword"],
 })
 
 export default function SignInPage() {
@@ -58,7 +65,7 @@ export default function SignInPage() {
       <h1 className='text-3xl'>momento</h1>
       <Card className='w-full max-w-sm'>
         <CardHeader>
-          <CardTitle className='text-center font-bold'>Create an account</CardTitle>
+          <CardTitle className='text-center font-semibold'>Create an account</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -78,7 +85,39 @@ export default function SignInPage() {
                   )}
                 />
               </div>
-              <div className='mb-8'>
+              <div className='flex flex-row gap-4 mb-6'>
+                <div>
+                  <FormField 
+                    control={form.control}
+                    name="firstName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                          <Input type="text" placeholder="John" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div>
+                  <FormField 
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                          <Input type="text" placeholder="Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className='mb-6'>
                 <FormField 
                   control={form.control}
                   name="password"
@@ -87,6 +126,21 @@ export default function SignInPage() {
                       <FormLabel>Password</FormLabel>
                       <FormControl>
                         <Input type="password" placeholder="Password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className='mb-8'>
+                <FormField 
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" placeholder="Confirm Password" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
