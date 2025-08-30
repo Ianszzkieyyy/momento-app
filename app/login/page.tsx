@@ -29,6 +29,13 @@ const formSchema = z.object({
   password: z.string().min(8).max(100),
 })
 
+async function onSubmit(data: z.infer<typeof formSchema>) {
+  const formData = new FormData();
+  formData.append('email', data.email);
+  formData.append('password', data.password);
+  await login(formData)
+}
+
 export default function LoginPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -38,12 +45,6 @@ export default function LoginPage() {
     },
    })
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append('email', data.email);
-    formData.append('password', data.password);
-    login(formData)
-  }
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen gap-4'>
@@ -86,7 +87,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className='flex flex-row justify-between items-center mt-4'>
-                <Button type="submit">Log In</Button>
+                <Button type='submit'>Log In</Button>
                 <Button asChild variant="link">
                   <Link href="/signup">Don&apos;t have an account? Sign Up</Link>
                 </Button>

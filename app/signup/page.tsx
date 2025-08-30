@@ -44,6 +44,15 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 })
 
+async function onSubmit(data: z.infer<typeof formSchema>) {
+  const formData = new FormData();
+  formData.append('email', data.email);
+  formData.append('password', data.password);
+  formData.append('firstName', data.firstName);
+  formData.append('lastName', data.lastName);
+  await signup(formData)
+}
+
 export default function SignInPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,13 +61,6 @@ export default function SignInPage() {
       password: '',
     },
    })
-
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append('email', data.email);
-    formData.append('password', data.password);
-    signup(formData)
-  }
 
   return (
     <div className='flex flex-col items-center justify-center min-h-screen gap-4'>
