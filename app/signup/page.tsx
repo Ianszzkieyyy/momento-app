@@ -1,6 +1,6 @@
 "use client"
 
-import { login } from '../auth/actions'
+import { signup } from '../auth/actions'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from "react-hook-form"
@@ -15,7 +15,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-
 import {
   Card,
   CardContent,
@@ -24,12 +23,21 @@ import {
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(100, "Password must be at most 100 characters")
+  .regex(/[a-z]/, "Password must contain a lowercase letter")
+  .regex(/[A-Z]/, "Password must contain an uppercase letter")
+  .regex(/[0-9]/, "Password must contain a number")
+  .regex(/[^a-zA-Z0-9]/, "Password must contain a special character");
+
 const formSchema = z.object({
   email: z.string().email(),
-  password: z.string().min(8).max(100),
+  password: passwordSchema,
 })
 
-export default function LoginPage() {
+export default function SignInPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,7 +50,7 @@ export default function LoginPage() {
     const formData = new FormData();
     formData.append('email', data.email);
     formData.append('password', data.password);
-    login(formData)
+    signup(formData)
   }
 
   return (
@@ -50,7 +58,7 @@ export default function LoginPage() {
       <h1 className='text-3xl'>momento</h1>
       <Card className='w-full max-w-sm'>
         <CardHeader>
-          <CardTitle className='text-center font-bold'>Log in to your account</CardTitle>
+          <CardTitle className='text-center font-bold'>Create an account</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -86,9 +94,9 @@ export default function LoginPage() {
                 />
               </div>
               <div className='flex flex-row justify-between items-center mt-4'>
-                <Button type="submit">Log In</Button>
+                <Button type="submit">Sign Up</Button>
                 <Button asChild variant="link">
-                  <Link href="/signup">Don&apos;t have an account? Sign Up</Link>
+                  <Link href="/login">Already have an account? Log In</Link>
                 </Button>
               </div>
             </form>
