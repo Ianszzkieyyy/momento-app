@@ -67,7 +67,7 @@ export default function SignInPage() {
       <h1 className='text-3xl'>momento</h1>
       <Card className='w-full max-w-sm'>
         <CardHeader>
-          <CardTitle className='text-center font-semibold'>Create an account</CardTitle>
+          <CardTitle className='text-center text-2xl font-normal'>Create an account</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
