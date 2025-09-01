@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation";
 import { 
   Sidebar, 
   SidebarContent,
@@ -35,7 +34,6 @@ const views = [
 ]
 
 export default function AppSidebar() {
-  const router = useRouter();
 
   return (
     <Sidebar>
@@ -50,7 +48,7 @@ export default function AppSidebar() {
                 {views.map((view) => (
                   <SidebarMenuItem key={view.title}>
                     <SidebarMenuButton className="text-xl py-6 mb-2 hover:bg-secondary transition-all duration-75" asChild>
-                      <button onClick={() => router.push(view.href)}>{view.title}</button>
+                      <button onClick={() => history.pushState(null, '', view.href)}>{view.title}</button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}

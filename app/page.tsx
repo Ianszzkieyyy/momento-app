@@ -13,6 +13,16 @@ export default async function Home() {
       redirect('/login')
     }
 
+    const { data: user, error: userError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', data.user.id)
+      .single()
+    if (userError) {
+      console.error('Error fetching user profile: ', userError)
+    }
+    
+
   return (
     <div className='relative w-full'>
       <div className="hidden md:block">
@@ -20,6 +30,9 @@ export default async function Home() {
       </div>
       <div className='flex justify-center'>
         <CalendarStrip />
+      </div>
+      <div>
+        <h1>hello, {user?.first_name}</h1>
       </div>
     </div>
   );
