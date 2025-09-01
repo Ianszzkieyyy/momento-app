@@ -7,7 +7,7 @@ export default function CalendarStrip() {
     const days = Array.from({ length: 30 }, (_, i) => subDays(today, i)).reverse();
 
     return (
-        <div className="relative sm:w-sm md:w-md lg:w-xl m-auto">
+        <div className="relative w-full max-w-dvw sm:max-w-md md:max-w-lg lg:max-w-xl">
             <ScrollArea className="w-full">
                 <div className="flex gap-4 p-4">
                     {days.map((day, idx) => {

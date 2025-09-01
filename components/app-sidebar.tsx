@@ -44,12 +44,12 @@ export default function AppSidebar() {
             <h1 className="text-3xl text-balance">momento</h1>
           </SidebarHeader>
           <SidebarGroup>
-            <SidebarGroupLabel className="font-bold tracking-wider text-sidebar-foreground/50">CHANGE VIEW</SidebarGroupLabel>
+            <SidebarGroupLabel className="font-bold tracking-widest text-sidebar-foreground/50">CHANGE VIEW</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {views.map((view) => (
                   <SidebarMenuItem key={view.title}>
-                    <SidebarMenuButton className="text-xl py-6 mb-2" asChild>
+                    <SidebarMenuButton className="text-xl py-6 mb-2 hover:bg-secondary transition-all duration-75" asChild>
                       <button onClick={() => router.push(view.href)}>{view.title}</button>
                     </SidebarMenuButton>
                   </SidebarMenuItem>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
 import "./globals.css";
 
@@ -22,14 +22,13 @@ export default async function RootLayout({
     <html lang="en">
       <body>
         <SidebarProvider defaultOpen={defaultOpen}>
-          <div className="hidden lg:block">
+          <div className="hidden md:block">
             <AppSidebar />
           </div>
-          <main>
-            <div className="hidden lg:block">
-              <SidebarTrigger />
+          <main className="flex-1 flex flex-col">
+            <div className="flex-1 flex justify-center">
+              {children}
             </div>
-            {children}
           </main>
         </SidebarProvider>
       </body>
