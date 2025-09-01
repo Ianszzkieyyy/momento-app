@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import CalendarStrip from '@/components/callendar-strip'
+import EmptyView from '@/components/empty-view'
 
 
 export default async function Home() {
@@ -28,11 +29,10 @@ export default async function Home() {
       <div className="hidden md:block">
           <SidebarTrigger className='absolute top-4 left-4 z-50'/>
       </div>
-      <div className='flex justify-center'>
+      <div className='flex flex-col justify-center items-center'>
         <CalendarStrip />
-      </div>
-      <div>
-        <h1>hello, {user?.first_name}</h1>
+        <EmptyView />
+        {/* <h1>hello, {user?.first_name}</h1> */}
       </div>
     </div>
   );
