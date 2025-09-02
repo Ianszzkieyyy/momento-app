@@ -14,7 +14,7 @@ export default async function Home() {
       redirect('/login')
     }
 
-    const { data: user, error: userError } = await supabase
+    const { data: { user }, error: userError } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', data.user.id)

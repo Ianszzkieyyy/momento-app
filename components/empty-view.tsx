@@ -2,22 +2,21 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Camera, User } from "lucide-react";
-import { set } from "date-fns";
+import { Camera } from "lucide-react";
 
 export default function EmptyView() {
     const [uploading, setUploading] = useState<boolean>(false);
-    const [image, setImage] = useState<File | null>(null);
 
     const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
         const file = event.target.files?.[0]
         if (!file) return
 
         setUploading(true)
 
         const fileExt = file.name.split('.').pop()
-        const fileName = `${Math.random()}-${Date.now()}.${fileExt}`
+        const fileName = `${user?.id}-${Date.now()}.${fileExt}`
         const filePath = `entry-photo/${fileName}`
 
         const { error: uploadError } = await supabase.storage
@@ -28,6 +27,7 @@ export default function EmptyView() {
             setUploading(false)
         }
 
+        setUploading(false)
     }
 
     return (
@@ -36,6 +36,7 @@ export default function EmptyView() {
                 <input id="file-upload" type="file" accept="image/*" onChange={handleUpload} className="hidden" />
                 <Camera className="w-24 h-24 text-muted-foreground" />
                 <h1>Take a quick moment...</h1>
+                {uploading && <p>Uploading...</p>}
             </label>
 
         </div>
