@@ -9,7 +9,7 @@ export async function POST (req: Request) {
     }
 
     const { filePath } = await req.json()
-    if (!filePath.startsWith(`entry-photo/${user.id}-`)) {
+    if (!filePath.startsWith(`${user.id}/${user.id}-`)) {
         return new Response('Forbidden', { status: 403 });
     }
 

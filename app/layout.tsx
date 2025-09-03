@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers"
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/app-sidebar";
+import BottomNav from "@/components/bottom-nav";
 import { CircleUser } from "lucide-react";
 import "./globals.css";
 import { Button } from "@/components/ui/button";
@@ -36,6 +37,9 @@ export default async function RootLayout({
             </div>
             <div className="flex-1 flex justify-center">
               {children}
+            </div>
+            <div className="md:hidden">
+              <BottomNav />
             </div>
           </main>
         </SidebarProvider>

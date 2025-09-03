@@ -29,10 +29,11 @@ export default async function Home() {
       <div className="hidden md:block">
           <SidebarTrigger className='absolute top-4 left-4 z-50'/>
       </div>
-      <div className='flex flex-col justify-center items-center'>
+      <div className='flex flex-col items-center h-[80dvh]'>
         <CalendarStrip />
-        <EmptyView />
-        {/* <h1>hello, {user?.first_name}</h1> */}
+        <div className='flex-1 flex items-center justify-center'>
+          <EmptyView />
+        </div>
       </div>
     </div>
   );
