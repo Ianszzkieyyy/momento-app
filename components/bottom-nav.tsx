@@ -25,9 +25,9 @@ const views: View[] = [
         icon: <Calendar />
     },
     {
-        title: "Camera",
+        title: "",
         href: "?view=camera",
-        icon: <Camera />
+        icon: <div className="bg-accent p-4 rounded-full"><Camera className="text-accent-foreground"/></div>
     },
     {
         title: "List",

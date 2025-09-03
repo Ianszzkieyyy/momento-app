@@ -6,6 +6,7 @@ import { Camera } from "lucide-react";
 
 export default function EmptyView() {
     const [uploading, setUploading] = useState<boolean>(false);
+    const [signedUrl, setSignedUrl] = useState<string | null>(null);
 
     const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         const supabase = createClient()
@@ -29,6 +30,22 @@ export default function EmptyView() {
 
         console.log("File uploaded successfully:", filePath)
         setUploading(false)
+
+        const response = await fetch('/api/image', {
+            method: 'POST',
+            body: JSON.stringify({ filePath: filePath }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            console.error("Error creating image record: ", response.statusText)
+        }
+
+        const data = await response.json()
+        setSignedUrl(data.url)
+        console.log("Signed URL: ", data.url)
     }
 
     return (
