@@ -5,7 +5,6 @@ export async function POST (req: Request) {
     const { data: { user }} = await (await supabase).auth.getUser();
 
     const { filePath } = await req.json()
-    console.log('Received filePath:', filePath); // Add this line
     if (!user) {
         return new Response('Unauthorized', { status: 401 });
     }
@@ -20,7 +19,6 @@ export async function POST (req: Request) {
         .createSignedUrl(filePath, 60 * 60)
     if (error) return Response.json({ error: error.message}, { status: 400 })
 
-    console.log('Generated signed URL for:', filePath); // Add this line
 
     return Response.json({ url: data.signedUrl })
 }

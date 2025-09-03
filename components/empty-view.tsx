@@ -1,57 +1,25 @@
 "use client"
 
-import { useState } from "react";
-import { createClient } from "@/utils/supabase/client";
+import { useState, useEffect } from "react";
+import  handleUpload  from "@/utils/upload";
 import { Camera } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function EmptyView() {
     const [uploading, setUploading] = useState<boolean>(false);
     const [signedUrl, setSignedUrl] = useState<string | null>(null);
+    const router = useRouter();
 
-    const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-        const supabase = createClient()
-        const { data: { user } } = await supabase.auth.getUser()
-        const file = event.target.files?.[0]
-        if (!file) return
-
-        setUploading(true)
-
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${user?.id}-${Date.now()}.${fileExt}`
-        const filePath = `${user?.id}/${fileName}`
-
-        const { error: uploadError } = await supabase.storage
-            .from("entry-photo")
-            .upload(filePath, file)
-        if (uploadError) {
-            console.error("Error uploading image: ", uploadError)
-            setUploading(false)
+    useEffect(() => {
+        if (signedUrl) {
+            router.push(`/create?signedUrl=${encodeURIComponent(signedUrl)}`);
         }
-
-        console.log("File uploaded successfully:", filePath)
-        setUploading(false)
-
-        const response = await fetch('/api/image', {
-            method: 'POST',
-            body: JSON.stringify({ filePath: filePath }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-
-        if (!response.ok) {
-            console.error("Error creating image record: ", response.statusText)
-        }
-
-        const data = await response.json()
-        setSignedUrl(data.url)
-        console.log("Signed URL: ", data.url)
-    }
+    }, [signedUrl, router])
 
     return (
         <div>
             <label htmlFor="file-upload" className="flex flex-col items-center justify-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
-                <input id="file-upload" type="file" accept="image/*" onChange={handleUpload} className="hidden" />
+                <input id="file-upload" type="file" accept="image/*" onChange={e => handleUpload(e, setUploading, setSignedUrl)} className="hidden" />
                 <Camera className="w-24 h-24 text-secondary" />
                 <h1>Take a quick moment...</h1>
                 {uploading && <p>Uploading...</p>}
