@@ -1,6 +1,7 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import Image from 'next/image'
 import { Textarea } from "@/components/ui/textarea";
 
@@ -14,13 +15,15 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
+import handleUploadImage from "@/utils/upload";
+
+import { Camera } from "lucide-react";
 
 const formSchema = z.object({
     content: z.string().min(1, "Content is required").max(200, "Content must be at most 200 characters"),
@@ -41,6 +44,10 @@ export default function CreatePage() {
     const signedUrl = searchParams.get("signedUrl");
     const decodedUrl = signedUrl ? decodeURIComponent(signedUrl) : null;
 
+    const [uploading, setUploading] = useState<boolean>(false);
+    const [url, setUrl] = useState<string | null>(decodedUrl);
+    const router = useRouter();
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -49,25 +56,29 @@ export default function CreatePage() {
         }
     });
 
+    useEffect(() => {
+        if (url) {
+            router.replace(`/create?signedUrl=${encodeURIComponent(url)}`);
+        }
+    }, [url, router])
+
     return (
         <div>
             <Card>
                 <CardContent>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            {!decodedUrl ? <FormField 
-                                control={form.control}
-                                name="image"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Image URL</FormLabel>
-                                        <FormControl>
-                                            <Textarea placeholder="Enter image URL" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            /> : 
+                            {!decodedUrl ? (
+                                <div className="border-4 border-dashed border-border rounded-md p-16 mb-4">
+                                    <label htmlFor="file-upload" className="flex flex-col items-center justify-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
+                                        <input id="file-upload" type="file" accept="image/*" onChange={e => handleUploadImage(e, setUploading, setUrl)} className="hidden" />
+                                        <Camera className="w-24 h-24 text-secondary" />
+                                        <h1>Take a quick moment...</h1>
+                                        {uploading && <p>Uploading...</p>}
+                                    </label>
+                                </div>
+
+                            ) : 
                             <div className="mb-4">
                                 <Image src={decodedUrl} alt="Uploaded Image" width={300} height={300} className="rounded-md" />
                             </div>
@@ -80,6 +91,7 @@ export default function CreatePage() {
                                         <FormControl>
                                             <Textarea className="resize-none h-32" placeholder="What's on your mind?" {...field} />
                                         </FormControl>
+                                        <FormMessage />
                                     </FormItem>
                                 )}
                             />
