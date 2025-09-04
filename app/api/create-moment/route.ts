@@ -1,14 +1,11 @@
-"use server"
-
-import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-
+import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/utils/supabase/server'
 
-export async function createMoment(formData: FormData) {
+export async function POST(req: NextRequest) {
     const supabase = await createClient()
     const { data: { user }} = await supabase.auth.getUser();
 
+    const formData = await req.formData();
     const data = {
       text: formData.get('content') as string,
       image_url: formData.get('image') as string,
@@ -20,22 +17,21 @@ export async function createMoment(formData: FormData) {
       .select()
       .single()
     if (error) {
-      console.error('Error creating moment:', error)
-      return
+      return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     const { data: upserted, error: upsertError } = await supabase
       .from('tags')
       .upsert(
-        data.tags.map(tag => ({ name: tag }))
+        data.tags.map(tag => ({ name: tag })),
+        { onConflict: "name" } 
       )
       .select()
     if (upsertError) {
-      console.error('Error upserting tags:', upsertError)
-      return
+        return NextResponse.json({ error: upsertError.message }, { status: 500 });
     }
 
-      if (upserted) {
+    if (upserted) {
       const rows = upserted.map((t) => ({
         entry_id: entry.id,
         tag_id: t.id,
@@ -43,6 +39,6 @@ export async function createMoment(formData: FormData) {
       await supabase.from("entry_tags").insert(rows);
     }
 
-    revalidatePath('/')
-    redirect('/')
+    return NextResponse.json({ success: true });
+
 }

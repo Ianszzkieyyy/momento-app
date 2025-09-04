@@ -2,14 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import Image from 'next/image'
-import { Textarea } from "@/components/ui/textarea";
 
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -23,21 +22,15 @@ import {
 } from "@/components/ui/card"
 import handleUploadImage from "@/utils/upload";
 
+import Image from 'next/image'
 import { Camera } from "lucide-react";
+import TagsSelector from "@/components/tags-selector"
 
 const formSchema = z.object({
     content: z.string().min(1, "Content is required").max(200, "Content must be at most 200 characters"),
-    image: z.url({ message: "Invalid image URL" }).refine(
-        (url) => /\.(jpg|jpeg|png|gif|webp|svg|heic)$/i.test(url),
-        { message: "URL must point to an image file" }
-    )
+    image: z.url({ message: "Invalid image URL" }),
+    tags: z.array(z.string()).min(0),
 })
-
-async function onSubmit(data: z.infer<typeof formSchema>) {
-    const formData = new FormData();
-    formData.append('content', data.content);
-    formData.append('image', data.image);
-}
 
 export default function CreatePage() {
     const searchParams = useSearchParams();
@@ -52,9 +45,33 @@ export default function CreatePage() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             content: '',
-            image: decodedUrl || ''
+            image: decodedUrl || '',
+            tags: [],
         }
     });
+
+    async function onSubmit(data: z.infer<typeof formSchema>) {
+        const formData = new FormData();
+        formData.append('content', data.content);
+        formData.append('image', data.image);
+        formData.append('tags', JSON.stringify(data.tags));
+        const res = await fetch('/api/create-moment', {
+            method: 'POST',
+            body: formData,
+        })
+        if (res.ok) {
+            window.location.href = '/';
+        } else {
+            const errorData = await res.json();
+            console.error('Error creating moment:', errorData.error);
+        }
+    }
+
+    useEffect(() => {
+        if (decodedUrl) {
+            form.setValue('image', decodedUrl);
+        }
+    }, [decodedUrl, form]);
 
     useEffect(() => {
         if (url) {
@@ -67,7 +84,7 @@ export default function CreatePage() {
             <Card>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <form onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}>
                             {!decodedUrl ? (
                                 <div className="border-4 border-dashed border-border rounded-md p-16 mb-4">
                                     <label htmlFor="file-upload" className="flex flex-col items-center justify-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
@@ -85,6 +102,18 @@ export default function CreatePage() {
                             }
                             <FormField 
                                 control={form.control}
+                                name="tags"
+                                render={() => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <TagsSelector form={form} name="tags" />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField 
+                                control={form.control}
                                 name="content"
                                 render={({ field }) => (
                                     <FormItem>
@@ -95,7 +124,7 @@ export default function CreatePage() {
                                     </FormItem>
                                 )}
                             />
-                            <Button type="submit" className="mt-4 w-full">Create Momento</Button>
+                            <Button type="submit" className="mt-4 w-full cursor-pointer" disabled={!decodedUrl || uploading}>{uploading ? 'Uploading...' : 'Create Momento'}</Button>
                         </form>
                     </Form>
                 </CardContent>
