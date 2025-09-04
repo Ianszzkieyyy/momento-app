@@ -1,6 +1,6 @@
 import { createClient } from "./supabase/client";
 
-export default async function handleUpload(
+export default async function handleUploadImage(
     event: React.ChangeEvent<HTMLInputElement>,
     setUploading: (uploading: boolean) => void,
     setSignedUrl: (url: string | null) => void

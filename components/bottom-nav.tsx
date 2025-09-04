@@ -27,7 +27,7 @@ const views: View[] = [
     {
         title: "",
         href: "?view=camera",
-        icon: <div className="bg-accent p-4 rounded-full"><Camera className="text-accent-foreground"/></div>
+        icon: <div className="bg-primary p-4 rounded-full"><Camera className="text-primary-foreground"/></div>
     },
     {
         title: "List",
@@ -47,7 +47,6 @@ export default function BottomNav() {
             {views.map((view) => (
                 <button key={view.title} onClick={() => history.pushState(null, '', view.href)} className="flex flex-col flex-1 min-w-0 items-center text-sm text-muted-foreground hover:text-foreground">
                     {view.icon}
-                    <span>{view.title}</span>
                 </button>
             ))}
         </div>
