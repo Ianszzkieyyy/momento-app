@@ -20,11 +20,10 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card"
-import handleUploadImage from "@/utils/upload";
 
 import Image from 'next/image'
-import { Camera } from "lucide-react";
 import TagsSelector from "@/components/tags-selector"
+import UploadImage from "@/components/upload-image"
 
 const formSchema = z.object({
     content: z.string().min(1, "Content is required").max(200, "Content must be at most 200 characters"),
@@ -87,12 +86,11 @@ export default function CreatePage() {
                         <form onSubmit={form.handleSubmit(onSubmit, (e) => console.log(e))}>
                             {!decodedUrl ? (
                                 <div className="border-4 border-dashed border-border rounded-md p-16 mb-4">
-                                    <label htmlFor="file-upload" className="flex flex-col items-center justify-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
-                                        <input id="file-upload" type="file" accept="image/*" onChange={e => handleUploadImage(e, setUploading, setUrl)} className="hidden" />
-                                        <Camera className="w-24 h-24 text-secondary" />
-                                        <h1>Take a quick moment...</h1>
-                                        {uploading && <p>Uploading...</p>}
-                                    </label>
+                                    <UploadImage 
+                                        onUpload={setUrl} 
+                                        uploading={uploading} 
+                                        setUploading={setUploading} 
+                                    />
                                 </div>
 
                             ) : 
