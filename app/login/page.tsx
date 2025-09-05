@@ -6,6 +6,7 @@ import { z } from 'zod'
 import { useForm } from "react-hook-form"
 import Link from 'next/link'
 
+import GoogleOAuthButton from '@/components/google-button'
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -19,14 +20,12 @@ import {
 import {
   Card,
   CardContent,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(100),
+  email: z.email(),
+  password: z.string().min(8, { message: "Password must be at least 8 characters long" }).max(100),
 })
 
 async function onSubmit(data: z.infer<typeof formSchema>) {
@@ -45,14 +44,10 @@ export default function LoginPage() {
     },
    })
 
-
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen gap-4'>
+    <div className='flex flex-col w-lg items-center justify-center min-h-screen gap-4'>
       <h1 className='text-3xl'>momento</h1>
       <Card className='w-full max-w-sm'>
-        <CardHeader>
-          <CardTitle className='text-center font-bold'>Log in to your account</CardTitle>
-        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -79,22 +74,23 @@ export default function LoginPage() {
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input type="password" placeholder="Password" {...field} />
+                        <Input type="password" placeholder="********" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-              <div className='flex flex-row justify-between items-center mt-4'>
-                <Button type='submit'>Log In</Button>
-                <Button asChild variant="link">
-                  <Link href="/signup">Don&apos;t have an account? Sign Up</Link>
-                </Button>
-              </div>
+              <Button type='submit' className='w-full mb-2'>Log In</Button>
             </form>
           </Form>
-
+          <div className='flex flex-col gap-2 items-center'>
+            <div className='text-xs text-muted-foreground/50'>──────── <span className='font-bold'>  Or  </span> ────────</div>
+            <GoogleOAuthButton />
+            <Button asChild variant="link">
+              <Link href="/signup">Don&apos;t have an account? Sign Up</Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>   
     </div>
