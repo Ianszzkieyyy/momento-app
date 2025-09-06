@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { SidebarTrigger } from '@/components/ui/sidebar'
-import CalendarStrip from '@/components/callendar-strip'
-import EmptyView from '@/components/empty-page'
+import DailyView from '@/components/daily-view'
 
 
 export default async function Home() {
@@ -30,10 +29,7 @@ export default async function Home() {
           <SidebarTrigger className='absolute top-4 left-4 z-50'/>
       </div>
       <div className='flex flex-col items-center h-full'>
-        <CalendarStrip />
-        <div className='flex-1 flex items-center justify-center h-full w-full'>
-          <EmptyView />
-        </div>
+        <DailyView />
       </div>
     </div>
   );
