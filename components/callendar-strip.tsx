@@ -26,7 +26,7 @@ export default function CalendarStrip({ onDateSelect }: { onDateSelect?: (date: 
                         const selectedFlag = isSameDay(day, selectedDate);
                         return (
                             <Button 
-                                ref={el => dayRefs.current[idx] = el}
+                                ref={el => {dayRefs.current[idx] = el}}
                                 className={`text-accent rounded-2xl ${todayFlag ? "border-2 border-primary" : ""} ${selectedFlag ? "bg-primary text-primary-foreground" : ""}`} 
                                 key={idx} 
                                 size={"lgicon"} 
