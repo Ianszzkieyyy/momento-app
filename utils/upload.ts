@@ -3,7 +3,7 @@ import { createClient } from "./supabase/client";
 export default async function handleUploadImage(
     event: React.ChangeEvent<HTMLInputElement>,
     setUploading: (uploading: boolean) => void,
-    setSignedUrl: (url: string | null) => void
+    onUploadComplete: (url: string | null, filePath: string | null) => void,
 ) {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -40,6 +40,6 @@ export default async function handleUploadImage(
     }
 
     const data = await response.json()
-    setSignedUrl(data.url)
+    onUploadComplete(data.url, filePath)
     console.log("Signed URL: ", data.url)
 }

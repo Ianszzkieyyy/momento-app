@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import CalendarStrip from "./callendar-strip"
-import EmptyView from "./empty-page"
+import EmptyView from "./empty-view"
 import Image from "next/image"
 
 interface Entry {
@@ -41,12 +41,16 @@ export default function DailyView() {
 
 
     return (
-        <div>
+        <div className="flex flex-col h-full">
             <CalendarStrip onDateSelect={setSelectedDate}/>
-            <div className="mt-4">
+            <div className="flex flex-1 flex-col items-center justify-center mt-4">
                 {loading && <p>Loading...</p>}
                 {error && <p className="text-destructive">{error}</p>}
-                {!loading && !error && (entries.length === 0 ? <EmptyView /> : (
+                {!loading && !error && (entries.length === 0 ? 
+                    <div>
+                        <EmptyView />
+                    </div> 
+                : (
                     <div>
                         {entries.map(entry => (
                             <div key={entry.id} className="mb-6 p-4 border rounded-lg">

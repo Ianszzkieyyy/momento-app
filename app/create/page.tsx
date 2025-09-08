@@ -33,8 +33,12 @@ const formSchema = z.object({
 
 export default function CreatePage() {
     const searchParams = useSearchParams();
+
     const signedUrl = searchParams.get("signedUrl");
     const decodedUrl = signedUrl ? decodeURIComponent(signedUrl) : null;
+
+    const filePath = searchParams.get("filePath");
+    const decodedFilePath = filePath ? decodeURIComponent(filePath) : null;
 
     const [uploading, setUploading] = useState<boolean>(false);
     const [url, setUrl] = useState<string | null>(decodedUrl);
@@ -52,7 +56,7 @@ export default function CreatePage() {
     async function onSubmit(data: z.infer<typeof formSchema>) {
         const formData = new FormData();
         formData.append('content', data.content);
-        formData.append('image', data.image);
+        formData.append('image', decodedFilePath || '');
         formData.append('tags', JSON.stringify(data.tags));
         const res = await fetch('/api/create-moment', {
             method: 'POST',
@@ -66,17 +70,12 @@ export default function CreatePage() {
         }
     }
 
-    useEffect(() => {
-        if (decodedUrl) {
-            form.setValue('image', decodedUrl);
-        }
-    }, [decodedUrl, form]);
 
     useEffect(() => {
         if (url) {
-            router.replace(`/create?signedUrl=${encodeURIComponent(url)}`);
+            router.replace(`/create?signedUrl=${encodeURIComponent(url)}&filePath=${encodeURIComponent(decodedFilePath || '')}`);
         }
-    }, [url, router])
+    }, [url, router, decodedFilePath])
 
     return (
         <div>

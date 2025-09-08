@@ -8,8 +8,9 @@ export default function EmptyView() {
     const [uploading, setUploading] = useState<boolean>(false);
     const router = useRouter();
 
-    const handleUpload = (url: string) => {
-        router.push(`/create?signedUrl=${encodeURIComponent(url)}`);
+    const handleUpload = (url: string, filePath: string) => {
+        console.log("filePath", filePath);
+        router.push(`/create?signedUrl=${encodeURIComponent(url)}&filePath=${encodeURIComponent(filePath || '')}`);
     }
 
     return (
