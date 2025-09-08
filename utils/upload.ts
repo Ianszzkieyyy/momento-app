@@ -28,7 +28,7 @@ export default async function handleUploadImage(
 
     setUploading(false)
 
-    const response = await fetch('/api/image', {
+    const response = await fetch('/api/generate-signed', {
         method: 'POST',
         body: JSON.stringify({ filePath: filePath }),
         headers: {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
+import { generateSignedUrl } from "@/utils/generateSignedUrl";
 
 export async function GET(req: NextRequest) {
     const supabase = await createClient();
@@ -23,5 +24,16 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: entriesError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ entries, userData });
+    // replace response image_url with signed urls
+    const updatedEntries = await Promise.all(
+        entries.map(async (entry) => {
+            if (entry.image_url) {
+                const signedUrl = await generateSignedUrl(entry.image_url)
+                return { ...entry, image_url: signedUrl }
+            }
+            return entry
+        })
+    )
+
+    return NextResponse.json({ entries: updatedEntries });
 }
