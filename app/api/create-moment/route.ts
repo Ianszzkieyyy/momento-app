@@ -7,13 +7,14 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const data = {
+      title: formData.get('title') as string,
       text: formData.get('content') as string,
       image_url: formData.get('image') as string,
       tags: JSON.parse(formData.get('tags') as string) as string[],
     }
     const { data: entry, error } = await supabase
       .from('entries')
-      .insert({text: data.text, image_url: data.image_url, user_id: user?.id})
+      .insert({title: data.title, text: data.text, image_url: data.image_url, user_id: user?.id})
       .select()
       .single()
     if (error) {
@@ -23,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { data: upserted, error: upsertError } = await supabase
       .from('tags')
       .upsert(
-        data.tags.map(tag => ({ name: tag })),
+        data.tags.map(tag => ({ name: tag, user_id: user?.id })),
         { onConflict: "name" } 
       )
       .select()

@@ -3,11 +3,12 @@
 import { useState, useEffect } from "react"
 import CalendarStrip from "./callendar-strip"
 import EmptyView from "./empty-view"
-import Image from "next/image"
+import DailyEntry from "./daily-entry"
 
 interface Entry {
     id: string,
     text: string,
+    title: string,
     image_url: string,
 }
 
@@ -52,11 +53,8 @@ export default function DailyView() {
                     </div> 
                 : (
                     <div>
-                        {entries.map(entry => (
-                            <div key={entry.id} className="mb-6 p-4 border rounded-lg">
-                                {entry.image_url && <Image src={entry.image_url} width={500} height={300} alt="Entry Image" className="mb-4 object-cover rounded-md" />}
-                                <p className="whitespace-pre-wrap">{entry.text}</p>
-                            </div>
+                        {entries.map((entry, idx) => (
+                            <DailyEntry key={idx} entry={entry}/>
                         ))}
                     </div>
                 ))}

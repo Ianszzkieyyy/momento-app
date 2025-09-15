@@ -24,8 +24,10 @@ import {
 import Image from 'next/image'
 import TagsSelector from "@/components/tags-selector"
 import UploadImage from "@/components/upload-image"
+import { Input } from "@/components/ui/input"
 
 const formSchema = z.object({
+    title: z.string().min(1, "Title is required").max(50, "Title must be at most 50 characters"),
     content: z.string().min(1, "Content is required").max(200, "Content must be at most 200 characters"),
     image: z.url({ message: "Invalid image URL" }),
     tags: z.array(z.string()).min(0),
@@ -55,6 +57,7 @@ export default function CreatePage() {
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         const formData = new FormData();
+        formData.append('title', data.title);
         formData.append('content', data.content);
         formData.append('image', decodedFilePath || '');
         formData.append('tags', JSON.stringify(data.tags));
@@ -97,6 +100,18 @@ export default function CreatePage() {
                                 <Image src={decodedUrl} alt="Uploaded Image" width={300} height={300} className="rounded-md" />
                             </div>
                             }
+                            <FormField 
+                                control={form.control}
+                                name="title"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input placeholder="Title" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField 
                                 control={form.control}
                                 name="tags"

@@ -28,7 +28,7 @@ export default async function RootLayout({
           <div className="hidden md:block">
             <AppSidebar />
           </div>
-          <main className="flex-1 flex flex-col">
+          <main className="flex-1 flex flex-col overflow-x-hidden">
             <div className="flex items-center justify-between md:hidden py-4 px-6">
               <header className="text-xl">momento</header>
               <Button variant="ghost" size={"icon"}>
