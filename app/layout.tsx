@@ -23,19 +23,19 @@ export default async function RootLayout({
 
   return (
     <html lang="en">
-      <body>
+      <body className="h-screen">
         <SidebarProvider defaultOpen={defaultOpen}>
           <div className="hidden md:block">
             <AppSidebar />
           </div>
-          <main className="flex-1 flex flex-col overflow-x-hidden">
-            <div className="flex items-center justify-between md:hidden py-4 px-6">
+          <main className="flex-1 flex flex-col h-screen overflow-hidden">
+            <div className="flex items-center justify-between md:hidden py-4 px-6 flex-shrink-0">
               <header className="text-xl">momento</header>
               <Button variant="ghost" size={"icon"}>
                 <CircleUser />
               </Button>
             </div>
-            <div className="flex-1 flex justify-center">
+            <div className="flex-1 flex justify-center min-h-0">
               {children}
             </div>
             <div className="md:hidden">

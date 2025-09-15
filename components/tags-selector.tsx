@@ -9,20 +9,26 @@ type Tag = { id: string; name: string }
 
 export default function TagsSelector({ form, name } : { form: UseFormReturn<any>; name: string }) {
     const supabase = createClient()
+
     const [tags, setTags] = useState<Tag[]>([])
     const [query, setQuery] = useState<string>("")
     const [selected, setSelected] = useState<Tag[]>([])
 
     useEffect(() => {
         const fetchTags = async () => {
-            const { data } = await supabase
-                .from("tags")
-                .select("*")
-                .order("name", { ascending: true })
-            if (data) setTags(data)
+            const { data: { user } } = await supabase.auth.getUser()
+            if (user) {
+                const { data, error } = await supabase
+                    .from('tags')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('name', { ascending: true })
+                if (data) setTags(data)
+                if (error) console.error("Error fetching tags:", error)
+            }
         }
         fetchTags()
-    }, [])
+    }, [supabase])
 
     // Sync with react-hook-form
     useEffect(() => {

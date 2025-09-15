@@ -43,22 +43,27 @@ export default function DailyView() {
 
     return (
         <div className="flex flex-col h-full">
-            <CalendarStrip onDateSelect={setSelectedDate}/>
-            <div className="flex flex-1 flex-col items-center justify-center mt-4">
-                {loading && <p>Loading...</p>}
-                {error && <p className="text-destructive">{error}</p>}
-                {!loading && !error && (entries.length === 0 ? 
-                    <div>
-                        <EmptyView />
-                    </div> 
-                : (
-                    <div>
-                        {entries.map((entry, idx) => (
-                            <DailyEntry key={idx} entry={entry}/>
-                        ))}
-                    </div>
-                ))}
+            <div className="flex-shrink-0">
+                <CalendarStrip onDateSelect={setSelectedDate}/>
             </div>
+            <div className="flex-1 overflow-y-auto scrollbar-hide">
+                <div className="flex flex-1 flex-col items-center justify-center mt-4">
+                    {loading && <p>Loading...</p>}
+                    {error && <p className="text-destructive">{error}</p>}
+                    {!loading && !error && (entries.length === 0 ? 
+                        <div>
+                            <EmptyView />
+                        </div> 
+                    : (
+                        <div>
+                            {entries.map((entry) => (
+                                <DailyEntry key={entry.id} entry={entry}/>
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+            
         </div>
     )
 }
