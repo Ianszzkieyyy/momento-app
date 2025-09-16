@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateSignedUrl } from "@/utils/generateSignedUrl";
 
+
+
 export async function GET(req: NextRequest) {
     const supabase = await createClient();
     const date = req.nextUrl.searchParams.get("date");
@@ -19,21 +21,48 @@ export async function GET(req: NextRequest) {
         .select('*')
         .eq('user_id', userData.user.id)
         .gte('created_at', startDate)
-        .lt('created_at', endDate);
+        .lt('created_at', endDate)
     if (entriesError) {
         return NextResponse.json({ error: entriesError.message }, { status: 500 });
     }
 
-    // replace response image_url with signed urls
+    const entryIds = entries?.map(entry => entry.id) || [];
+
+    const { data: entryTagsData, error: entryTagsError } = await supabase
+        .from('entry_tags')
+        .select(`
+            entry_id,
+            tags (id, name)   
+        `)
+        .in('entry_id', entryIds)
+        .eq('user_id', userData.user.id)
+    if (entryTagsError) {
+        return NextResponse.json({ error: entryTagsError.message }, { status: 500 });
+    }
+
+    const entryTagsMap = new Map();
+    (entryTagsData ?? []).forEach(({ entry_id, tags }) => {
+        if (!entryTagsMap.has(entry_id)) {
+            entryTagsMap.set(entry_id, []);
+        }
+        if (tags) {
+            entryTagsMap.get(entry_id)?.push(tags);
+        }
+    })
+
+
     const updatedEntries = await Promise.all(
-        entries.map(async (entry) => {
+        (entries ?? []).map(async (entry) => {
+            const tags = entryTagsMap.get(entry.id) || [];
+
             if (entry.image_url) {
                 const signedUrl = await generateSignedUrl(entry.image_url)
-                return { ...entry, image_url: signedUrl }
+                return { ...entry, image_url: signedUrl, tags };
             }
-            return entry
+            return { ...entry, tags };
         })
     )
+
 
     return NextResponse.json({ entries: updatedEntries });
 }
