@@ -3,19 +3,9 @@
 import { useState, useEffect } from "react"
 import CalendarStrip from "./callendar-strip"
 import EmptyView from "./empty-view"
-import DailyEntry from "./daily-entry"
+import DailyEntryWrapper from "./daily-entry-wrapper"
+import { Entry } from "@/lib/types"
 
-interface Entry {
-    id: string,
-    text: string,
-    title: string,
-    image_url: string,
-    tags: {
-        id: string,
-        name: string
-    }[],
-    created_at: string ,
-}
 
 export default function DailyView() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
@@ -60,9 +50,9 @@ export default function DailyView() {
                             <EmptyView />
                         </div> 
                     : (
-                        <div className="space-y-6 w-full md:px-8 lg:px-16 px-8">
+                        <div className="w-full md:px-8 lg:px-16 px-8">
                             {entries.map((entry) => (
-                                <DailyEntry key={entry.id} entry={entry}/>
+                                <DailyEntryWrapper key={entry.id} entry={entry} />
                             ))}
                         </div>
                     ))}

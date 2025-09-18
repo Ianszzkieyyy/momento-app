@@ -11,46 +11,49 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const startDate = `${date} 00:00:00`;
-    const endDate = `${date} 23:59:59`;
+    if (date) {
+        const startDate = `${date} 00:00:00`;
+        const endDate = `${date} 23:59:59`;
 
-    const { data: entries, error: entriesError } = await supabase
-        .from("entries")
-        .select('*')
-        .eq('user_id', userData.user.id)
-        .gte('created_at', startDate)
-        .lt('created_at', endDate)
-    if (entriesError) {
-        return NextResponse.json({ error: entriesError.message }, { status: 500 });
-    }
+        const { data: entries, error: entriesError } = await supabase
+            .from("entries")
+            .select('*')
+            .eq('user_id', userData.user.id)
+            .gte('created_at', startDate)
+            .lt('created_at', endDate)
+        if (entriesError) {
+            return NextResponse.json({ error: entriesError.message }, { status: 500 });
+        }
 
-    const { data: tagsData, error: tagsError } = await supabase
-        .from('entry_tags')
-        .select('entry_id, tags(id, name)')
-        .in('entry_id', entries?.map(e => e.id) || [])
-    if (tagsError) {
-        return NextResponse.json({ error: tagsError.message }, { status: 500 });
-    }
-    console.log("Tags Data:", tagsData);
+        const { data: tagsData, error: tagsError } = await supabase
+            .from('entry_tags')
+            .select('entry_id, tags(id, name)')
+            .in('entry_id', entries?.map(e => e.id) || [])
+        if (tagsError) {
+            return NextResponse.json({ error: tagsError.message }, { status: 500 });
+        }
+        console.log("Tags Data:", tagsData);
 
-    const entriesWithTags = (entries ?? []).map(entry => {
-        const entryTags = tagsData?.filter(et => et.entry_id === entry.id).map(et => et.tags) || [];
-        return { ...entry, tags: entryTags };
-    })
-    console.log("Entries with Tags:", entriesWithTags);
-
-    const updatedEntries = await Promise.all(
-        (entriesWithTags ?? []).map(async (entry) => {
-
-            if (entry.image_url) {
-                const signedUrl = await generateSignedUrl(entry.image_url)
-                return { ...entry, image_url: signedUrl };
-            }
-            return { ...entry };
+        const entriesWithTags = (entries ?? []).map(entry => {
+            const entryTags = tagsData?.filter(et => et.entry_id === entry.id).map(et => et.tags) || [];
+            return { ...entry, tags: entryTags };
         })
-    )
+        console.log("Entries with Tags:", entriesWithTags);
 
+        const updatedEntries = await Promise.all(
+            (entriesWithTags ?? []).map(async (entry) => {
 
-    console.log("Updated Entries:", updatedEntries);
-    return NextResponse.json({ entries: updatedEntries });
+                if (entry.image_url) {
+                    const signedUrl = await generateSignedUrl(entry.image_url)
+                    return { ...entry, image_url: signedUrl };
+                }
+                return { ...entry };
+            })
+        )
+
+        console.log("Updated Entries:", updatedEntries);
+        return NextResponse.json({ entries: updatedEntries });
+    }
+
+    return NextResponse.json({ error: "Missing date or id parameter" }, { status: 400 });
 }
