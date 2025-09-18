@@ -42,19 +42,7 @@ export default async function EntryPage({ params }: { params: { id: string }}) {
 
     return (
         <div>
-            <h1 className="text-2xl font-bold mb-4">{entry.title}</h1>
-            {entry.image_url && (
-                <div className="mb-4">
-                    <Image 
-                        src={entry.image_url} 
-                        alt={entry.title} 
-                        width={600}
-                        height={400}
-                        className="object-cover rounded-lg"
-                    />
-                </div>
-            )}
-            <p className="text-gray-700">{entry.text}</p>
+            
         </div>
     )
 }
