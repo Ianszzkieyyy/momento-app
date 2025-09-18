@@ -42,3 +42,10 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         return NextResponse.json({ entry: updatedEntry });
     }
 }
+
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+    const supabase = await createClient();
+    const { id } = params;
+
+    
+}

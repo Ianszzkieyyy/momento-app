@@ -43,6 +43,7 @@ export default function EntryForm({ entry }: { entry: Entry }) {
         formData.append('content', data.content);
         formData.append('tags', JSON.stringify(data.tags));
 
+        setUploading(true);
         const res = await fetch(`/api/entries/${entry.id}`, {
             method: 'PUT',
             body: formData,
@@ -51,6 +52,7 @@ export default function EntryForm({ entry }: { entry: Entry }) {
         if (res.ok) {
             router.push(`/entry/${entry.id}`);
             router.refresh(); 
+            setUploading(false);
         } else {
             const errorData = await res.json();
             console.error('Error updating moment:', errorData.error);
