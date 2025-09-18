@@ -1,48 +1,36 @@
 import Image from "next/image"
-import { createClient } from "@/utils/supabase/server"
-import { generateSignedUrl } from "@/utils/generateSignedUrl"
-import { notFound } from "next/navigation"
-
-async function getEntry(id: string) {
-    const supabase = await createClient()
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError || !userData?.user) {
-        throw new Error("Unauthorized")
-    }
-
-    const { data: entry, error } = await supabase
-        .from("entries")
-        .select("*")
-        .eq("id", id)
-        .eq("user_id", userData.user.id)
-        .single();
-
-    if (error || !entry) {
-        notFound()
-    }
-
-    // Fetch tags
-    const { data: tagsData } = await supabase
-        .from('entry_tags')
-        .select('tags(id, name)')
-        .eq('entry_id', id)
-
-    const tags = tagsData?.map(t => t.tags) || []
-    let signedUrl = entry.image_url
-
-    if (entry.image_url) {
-        signedUrl = await generateSignedUrl(entry.image_url)
-    }
-
-    return { ...entry, tags, image_url: signedUrl };
-}
+import getEntry from "@/utils/getEntry"
+import EntryNav from "@/components/entry-nav"
 
 export default async function EntryPage({ params }: { params: { id: string }}) {
     const entry = await getEntry(params.id);
 
     return (
         <div>
-            
+            <EntryNav entryId={entry.id} />
+            {entry.image_url && (
+                <Image 
+                    src={entry.image_url}
+                    alt={entry.title || "Entry Image"}
+                    width={320}
+                    height={200}
+                    className="w-lg h-auto mb-8 rounded-lg"
+                />
+            )}
+            {entry.tags.length > 0 && (
+                <div className="flex gap-2 mb-2">
+                    {entry.tags.map(tag => {
+                        return (
+                            <div key={tag.id} className="bg-primary text-white font-medium rounded-md md:px-3 py-1 px-2 text-[0.6rem] tracking-widest flex items-center justify-center">
+                                {(tag.name).toUpperCase()}
+                            </div>
+                        )
+                    })}
+                </div>
+            )}
+            <h1 className="text-2xl mb-2">{entry.title}</h1>
+            <p className="text-gray-400 mb-4 lg:text-xs text-[0.6rem] font-semibold tracking-wider uppercase">{new Date(entry.created_at).toLocaleTimeString([], { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+            <p className="text-gray-800 whitespace-pre-wrap text-justify">{entry.text}</p>
         </div>
     )
 }
