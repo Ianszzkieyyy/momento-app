@@ -10,6 +10,11 @@ interface Entry {
     text: string,
     title: string,
     image_url: string,
+    tags: {
+        id: string,
+        name: string
+    }[],
+    created_at: string ,
 }
 
 export default function DailyView() {
@@ -55,7 +60,7 @@ export default function DailyView() {
                             <EmptyView />
                         </div> 
                     : (
-                        <div>
+                        <div className="space-y-6 w-full md:px-8 lg:px-16 px-8">
                             {entries.map((entry) => (
                                 <DailyEntry key={entry.id} entry={entry}/>
                             ))}

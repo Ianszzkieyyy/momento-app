@@ -2,8 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import { generateSignedUrl } from "@/utils/generateSignedUrl";
 
-
-
 export async function GET(req: NextRequest) {
     const supabase = await createClient();
     const date = req.nextUrl.searchParams.get("date");
@@ -26,43 +24,33 @@ export async function GET(req: NextRequest) {
         return NextResponse.json({ error: entriesError.message }, { status: 500 });
     }
 
-    const entryIds = entries?.map(entry => entry.id) || [];
-
-    const { data: entryTagsData, error: entryTagsError } = await supabase
+    const { data: tagsData, error: tagsError } = await supabase
         .from('entry_tags')
-        .select(`
-            entry_id,
-            tags (id, name)   
-        `)
-        .in('entry_id', entryIds)
-        .eq('user_id', userData.user.id)
-    if (entryTagsError) {
-        return NextResponse.json({ error: entryTagsError.message }, { status: 500 });
+        .select('entry_id, tags(id, name)')
+        .in('entry_id', entries?.map(e => e.id) || [])
+    if (tagsError) {
+        return NextResponse.json({ error: tagsError.message }, { status: 500 });
     }
+    console.log("Tags Data:", tagsData);
 
-    const entryTagsMap = new Map();
-    (entryTagsData ?? []).forEach(({ entry_id, tags }) => {
-        if (!entryTagsMap.has(entry_id)) {
-            entryTagsMap.set(entry_id, []);
-        }
-        if (tags) {
-            entryTagsMap.get(entry_id)?.push(tags);
-        }
+    const entriesWithTags = (entries ?? []).map(entry => {
+        const entryTags = tagsData?.filter(et => et.entry_id === entry.id).map(et => et.tags) || [];
+        return { ...entry, tags: entryTags };
     })
-
+    console.log("Entries with Tags:", entriesWithTags);
 
     const updatedEntries = await Promise.all(
-        (entries ?? []).map(async (entry) => {
-            const tags = entryTagsMap.get(entry.id) || [];
+        (entriesWithTags ?? []).map(async (entry) => {
 
             if (entry.image_url) {
                 const signedUrl = await generateSignedUrl(entry.image_url)
-                return { ...entry, image_url: signedUrl, tags };
+                return { ...entry, image_url: signedUrl };
             }
-            return { ...entry, tags };
+            return { ...entry };
         })
     )
 
 
+    console.log("Updated Entries:", updatedEntries);
     return NextResponse.json({ entries: updatedEntries });
 }
