@@ -68,28 +68,42 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
-    const { data: upserted, error: upsertError } = await supabase
-      .from('tags')
-      .upsert(
-        data.tags.map(tag => ({ name: tag, user_id: userData?.user.id })),
-        { onConflict: "name" } 
-      )
-      .select()
-    if (upsertError) {
-        return NextResponse.json({ error: upsertError.message }, { status: 500 });
+    const { error: deleteError } = await supabase
+        .from('entry_tags')
+        .delete()
+        .eq('entry_id', id);
+    if (deleteError) {
+        return NextResponse.json({ error: deleteError.message }, { status: 500 });
     }
 
-    if (upserted) {
-      const rows = upserted.map((t) => ({
-        entry_id: entry.id,
-        tag_id: t.id,
-      }));
-      await supabase.from("entry_tags").insert(rows);
+    if (data.tags.length > 0) {
+        const { data: upserted, error: upsertError } = await supabase
+          .from('tags')
+          .upsert(
+            data.tags.map(tag => ({ name: tag, user_id: userData?.user.id })),
+            { onConflict: "name" } 
+          )
+          .select()
+        if (upsertError) {
+            return NextResponse.json({ error: upsertError.message }, { status: 500 });
+        }
+
+        if (upserted) {
+          const rows = upserted.map((t) => ({
+            entry_id: entry.id,
+            tag_id: t.id,
+          }));
+
+          const { error: insertError } = await supabase
+            .from("entry_tags")
+            .insert(rows);
+          if (insertError) {
+              return NextResponse.json({ error: insertError.message }, { status: 500 });
+          }
+        }
     }
+
 
     return NextResponse.json({ success: true });
 
-
-
-    
 }

@@ -3,7 +3,8 @@ import getEntry from "@/utils/getEntry"
 import EntryNav from "@/components/entry-nav"
 
 export default async function EntryPage({ params }: { params: { id: string }}) {
-    const entry = await getEntry(params.id);
+    const { id } = await params
+    const entry = await getEntry(id);
 
     return (
         <div>
