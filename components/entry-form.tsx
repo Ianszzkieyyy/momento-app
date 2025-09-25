@@ -9,11 +9,12 @@ import { Entry } from "@/lib/types"
 
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image'
-import TagsSelector from "@/components/tags-selector"
 import { Input } from "@/components/ui/input"
+import { Tag } from "@/lib/types"
+import { MultiSelect, MultiSelectContent, MultiSelectGroup, MultiSelectItem, MultiSelectTrigger, MultiSelectValue } from "@/components/ui/multi-select"
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required").max(70, "Title must be at most 70 characters"),
@@ -22,7 +23,9 @@ const formSchema = z.object({
     tags: z.array(z.string()).min(0),
 })
 
-export default function EntryForm({ entry }: { entry: Entry }) {
+
+
+export default function EntryForm({ entry, userTags }: { entry: Entry, userTags: Tag[] }) {
     const [uploading, setUploading] = useState<boolean>(false);
     const router = useRouter();
 
@@ -36,6 +39,8 @@ export default function EntryForm({ entry }: { entry: Entry }) {
             tags: entry.tags?.map(tag => tag.name) || [], 
         }
     });
+
+    
 
     async function onSubmit(data: z.infer<typeof formSchema>) {
         const formData = new FormData();
@@ -64,7 +69,7 @@ export default function EntryForm({ entry }: { entry: Entry }) {
             <Card>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                             <div className="mb-4">
                                 <Image src={entry.image_url} alt="Uploaded Image" width={300} height={300} className="rounded-md" />
                             </div>
@@ -73,6 +78,7 @@ export default function EntryForm({ entry }: { entry: Entry }) {
                                 name="title"
                                 render={({ field }) => (
                                     <FormItem>
+                                        <FormLabel>Title</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Title" {...field} />
                                         </FormControl>
@@ -83,11 +89,37 @@ export default function EntryForm({ entry }: { entry: Entry }) {
                             <FormField 
                                 control={form.control}
                                 name="tags"
-                                render={() => (
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormControl>
-                                            <TagsSelector form={form} name="tags" />
-                                        </FormControl>
+                                    <FormLabel>Select Tags</FormLabel>
+                                        <MultiSelect
+                                            onValuesChange={(field.onChange)}
+                                            values={field.value || []}
+                                        >
+                                            <FormControl>
+                                                <MultiSelectTrigger className="w-full">
+                                                    <MultiSelectValue placeholder="Select tags" />
+                                                </MultiSelectTrigger>
+                                            </FormControl>
+                                            <MultiSelectContent
+                                                allowCreate={true}
+                                                createLabel="Create tag"
+                                                search={{ 
+                                                    placeholder: "Search or create tags...",
+                                                    emptyMessage: "No tags found." 
+                                                }}
+                                            >
+                                                <MultiSelectGroup>
+                                                    {/* Map tags associated with the user */}
+                                                    {userTags?.map((tag) => (
+                                                        <MultiSelectItem key={tag.id} value={tag.name}>
+                                                            {tag.name}
+                                                        </MultiSelectItem>
+                                                    ))}
+                                                    
+                                                </MultiSelectGroup>
+                                            </MultiSelectContent>
+                                        </MultiSelect>
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -97,6 +129,7 @@ export default function EntryForm({ entry }: { entry: Entry }) {
                                 name="content"
                                 render={({ field }) => (
                                     <FormItem>
+                                        <FormLabel>Content</FormLabel>
                                         <FormControl>
                                             <Textarea className="resize-none h-32 w-full min-w-0" placeholder="What's on your mind?" {...field} />
                                         </FormControl>

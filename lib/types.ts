@@ -9,3 +9,8 @@ export interface Entry {
     }[];
     created_at: string;
 }
+
+export interface Tag {
+    id: string;
+    name: string;
+}
