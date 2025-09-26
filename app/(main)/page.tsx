@@ -3,7 +3,6 @@ import { createClient } from '@/utils/supabase/server'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import DailyView from '@/components/daily-view'
 
-
 export default async function Home() {
 
     const supabase = await createClient()

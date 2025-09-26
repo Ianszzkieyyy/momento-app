@@ -42,7 +42,7 @@ export default function DailyView() {
                 <CalendarStrip onDateSelect={setSelectedDate}/>
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-hide">
-                <div className="flex flex-1 flex-col items-center justify-center mt-4">
+                <div className="flex flex-1 h-full flex-col items-center justify-center mt-4">
                     {loading && <p>Loading...</p>}
                     {error && <p className="text-destructive">{error}</p>}
                     {!loading && !error && (entries.length === 0 ? 
@@ -50,7 +50,7 @@ export default function DailyView() {
                             <EmptyView />
                         </div> 
                     : (
-                        <div className="w-full md:px-8 lg:px-16 px-8">
+                        <div className="w-full h-full md:px-8 lg:px-16 px-8 items-start">
                             {entries.map((entry) => (
                                 <DailyEntryWrapper key={entry.id} entry={entry} />
                             ))}

@@ -14,15 +14,16 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form"
 import {
   Card,
   CardContent,
 } from "@/components/ui/card"
+import { MultiSelect, MultiSelectContent, MultiSelectGroup, MultiSelectItem, MultiSelectTrigger, MultiSelectValue } from "@/components/ui/multi-select"
 
 import Image from 'next/image'
-import TagsSelector from "@/components/tags-selector"
 import UploadImage from "@/components/upload-image"
 import { Input } from "@/components/ui/input"
 
@@ -36,9 +37,10 @@ const formSchema = z.object({
 type CreateFormProps = {
     signedUrl?: string | null;
     filePath?: string | null;
+    userTags?: { id: string; name: string }[];
 }
 
-export default function CreateForm({ signedUrl, filePath }: CreateFormProps) {
+export default function CreateForm({ signedUrl, filePath, userTags }: CreateFormProps) {
 
     const decodedUrl = signedUrl ? decodeURIComponent(signedUrl) : null;
     const decodedFilePath = filePath ? decodeURIComponent(filePath) : null;
@@ -116,11 +118,35 @@ export default function CreateForm({ signedUrl, filePath }: CreateFormProps) {
                             <FormField 
                                 control={form.control}
                                 name="tags"
-                                render={() => (
+                                render={({ field }) => (
                                     <FormItem>
-                                        <FormControl>
-                                            <TagsSelector form={form} name="tags" />
-                                        </FormControl>
+                                        <FormLabel>Select Tags</FormLabel>
+                                        <MultiSelect
+                                            onValuesChange={(field.onChange)}
+                                            values={field.value || []}
+                                        >
+                                            <FormControl>
+                                                <MultiSelectTrigger className="w-full">
+                                                    <MultiSelectValue placeholder="Select tags" />
+                                                </MultiSelectTrigger>
+                                            </FormControl>
+                                            <MultiSelectContent
+                                                allowCreate={true}
+                                                createLabel="Create tag"
+                                                search={{ 
+                                                    placeholder: "Search or create tags...",
+                                                    emptyMessage: "No tags found." 
+                                                }}
+                                            >
+                                                <MultiSelectGroup>
+                                                    {userTags?.map((tag) => (
+                                                        <MultiSelectItem key={tag.id} value={tag.name}>
+                                                            {tag.name}
+                                                        </MultiSelectItem>
+                                                    ))}
+                                                </MultiSelectGroup>
+                                            </MultiSelectContent>
+                                        </MultiSelect>
                                         <FormMessage />
                                     </FormItem>
                                 )}

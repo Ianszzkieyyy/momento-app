@@ -25,7 +25,7 @@ const formSchema = z.object({
 
 
 
-export default function EntryForm({ entry, userTags }: { entry: Entry, userTags: Tag[] }) {
+export default function EditForm({ entry, userTags }: { entry: Entry, userTags: Tag[] }) {
     const [uploading, setUploading] = useState<boolean>(false);
     const router = useRouter();
 

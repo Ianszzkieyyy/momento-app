@@ -1,6 +1,6 @@
 "use client"
 
-import  handleUploadImage  from "@/utils/upload";
+import handleUploadImage from "@/utils/upload";
 import { Camera } from "lucide-react";
 
 type UploadImageProps = {
@@ -13,7 +13,8 @@ export default function UploadImage({ onUpload, uploading, setUploading }: Uploa
     return (
         <div>
             <label htmlFor="file-upload" className="flex flex-col items-center justify-center gap-4 cursor-pointer hover:opacity-80 transition-opacity">
-                <input 
+                <input
+                    disabled={uploading} 
                     id="file-upload" 
                     type="file" 
                     accept="image/*" 
@@ -30,7 +31,7 @@ export default function UploadImage({ onUpload, uploading, setUploading }: Uploa
                     className="hidden" />
                 <Camera className="w-24 h-24 text-secondary" />
                 <h1>Take a quick moment...</h1>
-                {uploading && <p>Uploading...</p>}
+                {uploading && <p>Uploading image...</p>}
             </label>
 
         </div>

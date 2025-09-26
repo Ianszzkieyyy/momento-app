@@ -1,5 +1,3 @@
-"use client"
-
 import Link from "next/link"
 import DailyEntry from "./daily-entry"
 import { Entry } from "@/lib/types"
