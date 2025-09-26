@@ -26,6 +26,7 @@ import { MultiSelect, MultiSelectContent, MultiSelectGroup, MultiSelectItem, Mul
 import Image from 'next/image'
 import UploadImage from "@/components/upload-image"
 import { Input } from "@/components/ui/input"
+import { useImageUpload } from "@/hooks/use-image-upload"
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required").max(70, "Title must be at most 70 characters"),
@@ -45,9 +46,11 @@ export default function CreateForm({ signedUrl, filePath, userTags }: CreateForm
     const decodedUrl = signedUrl ? decodeURIComponent(signedUrl) : null;
     const decodedFilePath = filePath ? decodeURIComponent(filePath) : null;
 
-    const [uploading, setUploading] = useState<boolean>(false);
+    const [currentFilePath, setCurrentFilePath] = useState<string | null>(decodedFilePath);
     const [url, setUrl] = useState<string | null>(decodedUrl);
     const router = useRouter();
+
+    const { uploading } = useImageUpload()
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -58,11 +61,16 @@ export default function CreateForm({ signedUrl, filePath, userTags }: CreateForm
         }
     });
 
+    const handleImageUpload = (uploadedUrl: string, uploadedFilePath: string) => {
+        setUrl(uploadedUrl);
+        setCurrentFilePath(uploadedFilePath);
+    }
+
     async function onSubmit(data: z.infer<typeof formSchema>) {
         const formData = new FormData();
         formData.append('title', data.title);
         formData.append('content', data.content);
-        formData.append('image', decodedFilePath || '');
+        formData.append('image', currentFilePath || '');
         formData.append('tags', JSON.stringify(data.tags));
         const res = await fetch('/api/create-moment', {
             method: 'POST',
@@ -79,9 +87,9 @@ export default function CreateForm({ signedUrl, filePath, userTags }: CreateForm
 
     useEffect(() => {
         if (url) {
-            router.replace(`/create?signedUrl=${encodeURIComponent(url)}&filePath=${encodeURIComponent(decodedFilePath || '')}`);
+            router.replace(`/create?signedUrl=${encodeURIComponent(url)}&filePath=${encodeURIComponent(currentFilePath || '')}`);
         }
-    }, [url, router, decodedFilePath])
+    }, [url, router, currentFilePath])
 
     return (
         <div className="w-full max-w-sm mx-auto px-4 py-8">
@@ -92,9 +100,7 @@ export default function CreateForm({ signedUrl, filePath, userTags }: CreateForm
                             {!decodedUrl ? (
                                 <div className="border-4 border-dashed border-border rounded-md p-16 mb-4">
                                     <UploadImage 
-                                        onUpload={setUrl} 
-                                        uploading={uploading} 
-                                        setUploading={setUploading} 
+                                        onUpload={handleImageUpload}
                                     />
                                 </div>
 
