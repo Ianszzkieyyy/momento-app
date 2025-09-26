@@ -1,6 +1,7 @@
 import Image from "next/image"
 import getEntry from "@/utils/getEntry"
 import EntryNav from "@/components/entry-nav"
+import { Tag } from "@/lib/types";
 
 export default async function EntryPage({ params }: { params: { id: string }}) {
     const { id } = await params
@@ -20,7 +21,7 @@ export default async function EntryPage({ params }: { params: { id: string }}) {
             )}
             {entry.tags.length > 0 && (
                 <div className="flex gap-2 mb-2">
-                    {entry.tags.map(tag => {
+                    {entry.tags.map((tag: Tag) => {
                         return (
                             <div key={tag.id} className="bg-primary text-white font-medium rounded-md md:px-3 py-1 px-2 text-[0.6rem] tracking-widest flex items-center justify-center">
                                 {(tag.name).toUpperCase()}

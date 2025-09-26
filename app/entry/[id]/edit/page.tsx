@@ -15,12 +15,11 @@ export default async function EditPage({ params }: { params: { id: string }}) {
         console.error("Error fetching tags:", tagsError)
     }
     
-
     const { id } = await params
     const entry = await getEntry(id);
     return (
         <div>
-            <EditForm entry={entry} userTags={tags || []} />
+            <EditForm entry={entry}/>
         </div>
     )
 }

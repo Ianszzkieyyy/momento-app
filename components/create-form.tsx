@@ -27,6 +27,7 @@ import Image from 'next/image'
 import UploadImage from "@/components/upload-image"
 import { Input } from "@/components/ui/input"
 import { useImageUpload } from "@/hooks/use-image-upload"
+import { useUserTags } from "@/hooks/use-user-tags"
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required").max(70, "Title must be at most 70 characters"),
@@ -38,10 +39,10 @@ const formSchema = z.object({
 type CreateFormProps = {
     signedUrl?: string | null;
     filePath?: string | null;
-    userTags?: { id: string; name: string }[];
 }
 
-export default function CreateForm({ signedUrl, filePath, userTags }: CreateFormProps) {
+export default function CreateForm({ signedUrl, filePath }: CreateFormProps) {
+    const { tags: userTags } = useUserTags();
 
     const decodedUrl = signedUrl ? decodeURIComponent(signedUrl) : null;
     const decodedFilePath = filePath ? decodeURIComponent(filePath) : null;

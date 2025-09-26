@@ -13,8 +13,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Card, CardContent } from "@/components/ui/card"
 import Image from 'next/image'
 import { Input } from "@/components/ui/input"
-import { Tag } from "@/lib/types"
 import { MultiSelect, MultiSelectContent, MultiSelectGroup, MultiSelectItem, MultiSelectTrigger, MultiSelectValue } from "@/components/ui/multi-select"
+import { useUserTags } from "@/hooks/use-user-tags"
 
 const formSchema = z.object({
     title: z.string().min(1, "Title is required").max(70, "Title must be at most 70 characters"),
@@ -25,9 +25,10 @@ const formSchema = z.object({
 
 
 
-export default function EditForm({ entry, userTags }: { entry: Entry, userTags: Tag[] }) {
+export default function EditForm({ entry }: { entry: Entry }) {
     const [uploading, setUploading] = useState<boolean>(false);
     const router = useRouter();
+    const { tags: userTags } = useUserTags();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
