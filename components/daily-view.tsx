@@ -6,8 +6,7 @@ import EmptyView from "./empty-view"
 import DailyEntryWrapper from "./daily-entry-wrapper"
 import { Entry } from "@/lib/types"
 
-
-export default function DailyView() {
+export default function DailyView({entryDates}: {entryDates: Date[]}) {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date())
     const [entries, setEntries] = useState<Entry[]>([])
     const [loading, setLoading] = useState<boolean>(false)
@@ -39,7 +38,7 @@ export default function DailyView() {
     return (
         <div className="flex flex-col h-full">
             <div className="flex-shrink-0">
-                <CalendarStrip onDateSelect={setSelectedDate}/>
+                <CalendarStrip onDateSelect={setSelectedDate} entryDates={entryDates} />
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-hide">
                 <div className="flex flex-1 h-full flex-col items-center justify-center mt-4">

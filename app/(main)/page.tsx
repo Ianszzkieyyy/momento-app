@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import DailyView from '@/components/daily-view'
+import getEntryDates from '@/utils/getEntryDates'
 
 export default async function Home() {
 
@@ -20,15 +21,16 @@ export default async function Home() {
     if (userError) {
       console.error('Error fetching user profile: ', userError)
     }
-    
 
+    const entryDates = await getEntryDates()
+    
   return (
     <div className='relative w-full h-100dvh'>
       <div className="hidden md:block">
           <SidebarTrigger className='absolute top-4 left-4 z-50'/>
       </div>
       <div className='flex flex-col items-center h-full'>
-        <DailyView />
+        <DailyView entryDates={entryDates}/>
       </div>
     </div>
   );

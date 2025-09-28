@@ -5,7 +5,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { format, subDays, isToday, isSameDay } from "date-fns"
 
-export default function CalendarStrip({ onDateSelect }: { onDateSelect?: (date: Date) => void}) {
+export default function CalendarStrip({ onDateSelect, entryDates }: { onDateSelect?: (date: Date) => void, entryDates: Date[] }) {
     const today = new Date()
     const days = Array.from({ length: 30 }, (_, i) => subDays(today, i)).reverse()
     const [selectedDate, setSelectedDate] = useState<Date>(today);
@@ -15,6 +15,10 @@ export default function CalendarStrip({ onDateSelect }: { onDateSelect?: (date: 
         setSelectedDate(day);
         onDateSelect?.(day);
         dayRefs.current[idx]?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+    }
+
+    const hasEntry = (date: Date) => {
+        return entryDates.some(entryDate => entryDate.toDateString() === date.toDateString())
     }
 
     return (
@@ -27,7 +31,11 @@ export default function CalendarStrip({ onDateSelect }: { onDateSelect?: (date: 
                         return (
                             <Button 
                                 ref={el => {dayRefs.current[idx] = el}}
-                                className={`text-accent rounded-2xl ${todayFlag ? "border-2 border-primary" : ""} ${selectedFlag ? "bg-primary text-primary-foreground" : ""}`} 
+                                className={`text-accent rounded-2xl 
+                                    ${todayFlag ? "border-2 border-primary" : ""} 
+                                    ${selectedFlag ? "bg-primary text-primary-foreground" : ""}
+                                    ${hasEntry(day) ? "ring-1 ring-offset-1 ring-accent/70" : ""}
+                                `} 
                                 key={idx} 
                                 size={"lgicon"} 
                                 variant={selectedFlag ? "default" : "outline"} 
