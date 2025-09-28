@@ -19,11 +19,17 @@ function Calendar({
   buttonVariant = "ghost",
   formatters,
   components,
+  entryDates = [],
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"]
+  entryDates?: Date[]
 }) {
   const defaultClassNames = getDefaultClassNames()
+
+  const hasEntry = (date: Date) => {
+    return entryDates.some(entryDate => entryDate.toDateString() === date.toDateString())
+  }
 
   return (
     <DayPicker
@@ -80,7 +86,7 @@ function Calendar({
         caption_label: cn(
           "select-none font-medium",
           captionLayout === "label"
-            ? "text-sm"
+            ? "text-sm font-bold uppercase tracking-wider text-foreground"
             : "rounded-md pl-2 pr-1 flex items-center gap-1 text-sm h-8 [&>svg]:text-muted-foreground [&>svg]:size-3.5",
           defaultClassNames.caption_label
         ),
@@ -110,7 +116,7 @@ function Calendar({
         range_middle: cn("rounded-none", defaultClassNames.range_middle),
         range_end: cn("rounded-r-md bg-accent", defaultClassNames.range_end),
         today: cn(
-          "bg-accent text-accent-foreground rounded-md data-[selected=true]:rounded-none",
+          "border-2 border-ring text-primary-foreground rounded-md data-[selected=true]:rounded-none",
           defaultClassNames.today
         ),
         outside: cn(
@@ -155,7 +161,9 @@ function Calendar({
             <ChevronDownIcon className={cn("size-4", className)} {...props} />
           )
         },
-        DayButton: CalendarDayButton,
+        DayButton: (props) => (
+          <CalendarDayButton {...props} hasEntry={hasEntry(props.day.date)} />
+        ),
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
@@ -176,8 +184,11 @@ function CalendarDayButton({
   className,
   day,
   modifiers,
+  hasEntry = false,
   ...props
-}: React.ComponentProps<typeof DayButton>) {
+}: React.ComponentProps<typeof DayButton> & {
+  hasEntry?: boolean
+}) {
   const defaultClassNames = getDefaultClassNames()
 
   const ref = React.useRef<HTMLButtonElement>(null)
@@ -200,13 +211,46 @@ function CalendarDayButton({
       data-range-start={modifiers.range_start}
       data-range-end={modifiers.range_end}
       data-range-middle={modifiers.range_middle}
-      className={cn(
-        "data-[selected-single=true]:bg-primary data-[selected-single=true]:text-primary-foreground data-[range-middle=true]:bg-accent data-[range-middle=true]:text-accent-foreground data-[range-start=true]:bg-primary data-[range-start=true]:text-primary-foreground data-[range-end=true]:bg-primary data-[range-end=true]:text-primary-foreground group-data-[focused=true]/day:border-ring group-data-[focused=true]/day:ring-ring/50 dark:hover:text-accent-foreground flex aspect-square size-auto w-full min-w-(--cell-size) flex-col gap-1 leading-none font-normal group-data-[focused=true]/day:relative group-data-[focused=true]/day:z-10 group-data-[focused=true]/day:ring-[3px] data-[range-end=true]:rounded-md data-[range-end=true]:rounded-r-md data-[range-middle=true]:rounded-none data-[range-start=true]:rounded-md data-[range-start=true]:rounded-l-md [&>span]:text-xs [&>span]:opacity-70",
+      className={cn(`
+        data-[selected-single=true]:bg-primary/70 
+        data-[selected-single=true]:text-primary-foreground 
+        data-[range-middle=true]:bg-accent 
+        data-[range-middle=true]:text-accent-foreground 
+        data-[range-start=true]:bg-primary/70 
+        data-[range-start=true]:text-primary-foreground 
+        data-[range-end=true]:bg-primary/70 
+        data-[range-end=true]:text-primary-foreground 
+        group-data-[focused=true]/day:border-ring 
+        group-data-[focused=true]/day:ring-ring/50 
+        dark:hover:text-accent-foreground 
+        flex 
+        aspect-square 
+        size-auto 
+        w-full 
+        min-w-(--cell-size) 
+        flex-col 
+        gap-1 
+        leading-none 
+        font-normal 
+        group-data-[focused=true]/day:relative 
+        group-data-[focused=true]/day:z-10 
+        group-data-[focused=true]/day:ring-[3px] 
+        data-[range-end=true]:rounded-md 
+        data-[range-end=true]:rounded-r-md 
+        data-[range-middle=true]:rounded-none 
+        data-[range-start=true]:rounded-md 
+        data-[range-start=true]:rounded-l-md 
+        [&>span]:text-md [&>span]:opacity-70`,
         defaultClassNames.day,
         className
       )}
       {...props}
-    />
+    >
+      <span>{day.date.getDate()}</span>
+      {hasEntry && (
+        <div className="w-1.75 h-1.75 bg-accent/50 rounded-full absolute bottom-1" />
+      )}
+    </Button>
   )
 }
 
