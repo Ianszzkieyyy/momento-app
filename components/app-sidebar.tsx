@@ -11,24 +11,25 @@ import {
   SidebarMenuItem,
   SidebarHeader, 
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 
 const views = [
   {
     title: "daily",
-    href: "?view=daily",
+    href: "/",
   },
   {
     title: "calendar",
-    href: "?view=calendar"
+    href: "/calendar"
   },
     {
     title: "list",
-    href: "?view=list"
+    href: "/list"
   },
     {
     title: "gallery",
-    href: "?view=gallery"
+    href: "/gallery"
   },
 
 ]
@@ -48,7 +49,7 @@ export default function AppSidebar() {
                 {views.map((view) => (
                   <SidebarMenuItem key={view.title}>
                     <SidebarMenuButton className="text-xl py-6 mb-2 hover:bg-secondary transition-all duration-75" asChild>
-                      <button onClick={() => history.pushState(null, '', view.href)}>{view.title}</button>
+                      <Link href={view.href}>{view.title}</Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
