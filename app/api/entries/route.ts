@@ -10,6 +10,7 @@ export async function GET(req: NextRequest) {
     if (userError || !userData?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    
 
     if (date) {
         const startDate = `${date} 00:00:00`;
@@ -32,13 +33,11 @@ export async function GET(req: NextRequest) {
         if (tagsError) {
             return NextResponse.json({ error: tagsError.message }, { status: 500 });
         }
-        console.log("Tags Data:", tagsData);
 
         const entriesWithTags = (entries ?? []).map(entry => {
             const entryTags = tagsData?.filter(et => et.entry_id === entry.id).map(et => et.tags) || [];
             return { ...entry, tags: entryTags };
         })
-        console.log("Entries with Tags:", entriesWithTags);
 
         const updatedEntries = await Promise.all(
             (entriesWithTags ?? []).map(async (entry) => {
