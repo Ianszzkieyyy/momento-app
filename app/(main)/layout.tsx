@@ -32,7 +32,7 @@ export default async function RootLayout({
             <CircleUser />
           </Button>
         </div>
-        <div className="flex-1 flex justify-center min-h-0">
+        <div className="flex-1 flex justify-center min-h-0 overflow-hidden">
           {children}
         </div>
         <div className="md:hidden">

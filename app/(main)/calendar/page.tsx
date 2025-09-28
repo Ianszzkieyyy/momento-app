@@ -1,6 +1,6 @@
-import { Calendar } from "@/components/ui/calendar"
+import CalendarView from "@/components/calendar-view"
+import ListView from "@/components/list-view"
 import { createClient } from "@/utils/supabase/server"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 export default async function CalendarPage() {
     const supabase = createClient()
@@ -15,16 +15,9 @@ export default async function CalendarPage() {
 
     const entryDatesArray = entryDates?.map(entry => new Date(entry.created_at)) || []
     return (
-        <ScrollArea className="overflow-y-clip h-full">
-            <Calendar 
-                mode="single"
-                numberOfMonths={12}
-                className="w-screen lg:w-sm px-8"
-                showOutsideDays={false}
-                buttonVariant="ghost"
-                entryDates={entryDatesArray}
-            />
-            <ScrollBar orientation={"vertical"} />
-        </ScrollArea>
+        <div className="md:w-full md:flex-row flex flex-col gap-4 h-full overflow-hidden md:justify-center md:items-center">
+            <CalendarView entryDates={entryDatesArray} />
+            <ListView />
+        </div>
     )
 }
