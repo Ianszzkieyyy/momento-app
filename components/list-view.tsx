@@ -52,7 +52,7 @@ export default function ListView() {
                 {error && <p className="text-destructive">{error}</p>}
                 {!loading && !error && (entries.length === 0) ? (
                     <div>
-                        <p>No entries yet for today</p>
+                        <p>No entries yet for this day</p>
                     </div> 
                 )
                 : (

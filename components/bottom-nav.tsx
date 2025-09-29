@@ -3,7 +3,7 @@
 import { Camera } from "lucide-react";
 import { Sun } from "lucide-react";
 import { Calendar } from "lucide-react";
-import { LayoutList } from "lucide-react";
+import { CircleUser } from "lucide-react";
 import { Images } from "lucide-react";
 import { JSX } from "react";
 import Link from "next/link";
@@ -44,13 +44,13 @@ export default function BottomNav() {
 
         },
         {
-            href: "/list",
-            icon: <LayoutList />
-        },
-        {
             href: "/gallery",
             icon: <Images />
         },
+        {
+            href: "/user",
+            icon: <CircleUser />
+        }
     ]
 
     return (

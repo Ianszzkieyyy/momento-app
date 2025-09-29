@@ -1,13 +1,16 @@
-import getAllEntries from "@/utils/getAllEntries"
+import { getAllEntries } from "@/utils/getAllEntries"
 import GalleryEntry from "@/components/gallery-entry"
+import Link from "next/link"
 
 export default async function GalleryPage() {
 
     const entries = await getAllEntries()
     return (
-        <div className="px-8 grid grid-cols-3 items-start">
+        <div className="h-full grid grid-cols-3">
             {entries.map((entry) => (
-                <GalleryEntry key={entry.id} entry={entry} />
+                <Link href={`/entry/${entry.id}`} prefetch={true} key={entry.id} className="relative w-full h-full aspect-square hover:opacity-80 transition-opacity ease-in-out">
+                    <GalleryEntry entry={entry} />
+                </Link>
             ))}
         </div>
     )

@@ -1,7 +1,8 @@
 import { createClient } from "./supabase/server";
 import { generateSignedUrl } from "./generateSignedUrl";
+import { cache } from 'react';
 
-export default async function getAllEntries() {
+export const getAllEntries = cache(async () => {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -40,4 +41,4 @@ export default async function getAllEntries() {
     )
 
     return updatedEntries
-}
+})
