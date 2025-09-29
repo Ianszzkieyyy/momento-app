@@ -3,6 +3,7 @@
 import { Calendar } from "@/components/ui/calendar"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import formatDate from "@/utils/formatDate"
 
 export default function CalendarView({ entryDates }: { entryDates: Date[] }) {
     const router = useRouter()
@@ -10,10 +11,7 @@ export default function CalendarView({ entryDates }: { entryDates: Date[] }) {
 
     const handleDateSelect = (date: Date | undefined) => {
         if (date) {
-            const year = date.getFullYear()
-            const month = String(date.getMonth() + 1).padStart(2, '0')
-            const day = String(date.getDate()).padStart(2, '0')
-            const dateString = `${year}-${month}-${day}`
+            const dateString = formatDate(date)
             router.push(`/calendar?date=${dateString}`)
             setSelectedDay(date)
         }

@@ -22,7 +22,7 @@ export default async function Home() {
       console.error('Error fetching user profile: ', userError)
     }
 
-    const entryDates = await getEntryDates()
+    const { entryDatesArray } = await getEntryDates()
     
   return (
     <div className='relative w-full h-100dvh'>
@@ -30,7 +30,7 @@ export default async function Home() {
           <SidebarTrigger className='absolute top-4 left-4 z-50'/>
       </div>
       <div className='flex flex-col items-center h-full'>
-        <DailyView entryDates={entryDates}/>
+        <DailyView entryDates={entryDatesArray}/>
       </div>
     </div>
   );

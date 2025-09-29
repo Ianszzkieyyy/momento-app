@@ -48,7 +48,7 @@ export default function BottomNav() {
             icon: <Images />
         },
         {
-            href: "/user",
+            href: "/dashboard",
             icon: <CircleUser />
         }
     ]

@@ -1,4 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
+import formatDate from "./formatDate";
 
 export default async function getEntryDates() {
     const supabase = createClient()
@@ -11,6 +12,18 @@ export default async function getEntryDates() {
         console.error(entryDatesError)
     }
 
-    return entryDates?.map(entry => new Date(entry.created_at)) || []
+    const entryDatesArray = entryDates?.map(entry => new Date(entry.created_at)) || []
+    const dateCountMap = entryDatesArray.reduce((acc, date) => {
+        const dateString = formatDate(date)
+        acc[dateString] = (acc[dateString] || 0) + 1
+        return acc
+    }, {} as Record<string, number>)
+
+    const entryDatesWeighted = Object.entries(dateCountMap).map(([date, count]) => ({
+        date: new Date(date),
+        weight: count
+    }))
+
+    return { entryDatesArray, entryDatesWeighted }
 
 }

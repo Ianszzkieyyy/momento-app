@@ -4,10 +4,10 @@ import getEntryDates from "@/utils/getEntryDates"
 
 export default async function CalendarPage() {
 
-    const entryDates = await getEntryDates()
+    const { entryDatesArray } = await getEntryDates()
     return (
         <div className="md:w-full md:flex-row flex flex-col gap-4 h-full overflow-hidden md:justify-center md:items-center">
-            <CalendarView entryDates={entryDates} />
+            <CalendarView entryDates={entryDatesArray} />
             <ListView />
         </div>
     )
