@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server"
 import getEntryDates from "@/utils/getEntryDates"
 import getFaveEntries from "@/utils/getFaveEntries"
+import Heatmap from "@/components/heatmap"
 
 export default async function Dashboard() {
     const supabase = createClient()
@@ -10,7 +11,8 @@ export default async function Dashboard() {
 
     return (
         <div>
-            Dashboard
+            dashboard
+            <Heatmap weightedDates={entryDatesWeighted} colors={["#ebeae6", "#d4c89a4d", "#d4c89a99", "#d4c89a", "#b85c00"]} />
         </div>
     )
 }
