@@ -13,16 +13,11 @@ export default async function getEntryDates() {
     }
 
     const entryDatesArray = entryDates?.map(entry => new Date(entry.created_at)) || []
-    const dateCountMap = entryDatesArray.reduce((acc, date) => {
+    const entryDatesWeighted = entryDatesArray.reduce((acc, date) => {
         const dateString = formatDate(date)
         acc[dateString] = (acc[dateString] || 0) + 1
         return acc
     }, {} as Record<string, number>)
-
-    const entryDatesWeighted = Object.entries(dateCountMap).map(([date, count]) => ({
-        date: new Date(date),
-        weight: count
-    }))
 
     return { entryDatesArray, entryDatesWeighted }
 

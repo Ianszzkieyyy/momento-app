@@ -1,7 +1,6 @@
 import { createClient } from "@/utils/supabase/server"
 import getEntryDates from "@/utils/getEntryDates"
 import getFaveEntries from "@/utils/getFaveEntries"
-import { CalendarHeatmap } from "@/components/ui/calendar-heatmap"
 
 export default async function Dashboard() {
     const supabase = createClient()
@@ -12,16 +11,6 @@ export default async function Dashboard() {
     return (
         <div>
             Dashboard
-            <CalendarHeatmap 
-                weightedDates={entryDatesWeighted} 
-                variantClassnames={[
-                    "text-primary-foreground bg-primary/100", 
-                    "text-primary-foreground bg-primary/80", 
-                    "text-primary-foreground bg-primary/60", 
-                    "text-primary-foreground bg-primary/40", 
-                    "text-primary-foreground bg-primary/20"
-                ]} 
-                />
         </div>
     )
 }

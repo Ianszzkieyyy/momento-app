@@ -30,7 +30,7 @@ export default function CalendarView({ entryDates }: { entryDates: Date[] }) {
                 className="w-screen lg:w-sm px-8"
                 showOutsideDays={false}
                 buttonVariant="ghost"
-            />       
+            />
         </div>
 
     )
