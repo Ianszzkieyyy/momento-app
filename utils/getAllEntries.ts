@@ -2,14 +2,18 @@ import { createClient } from "./supabase/server";
 import { generateSignedUrl } from "./generateSignedUrl";
 import { cache } from 'react';
 
-export const getAllEntries = cache(async () => {
+export const getAllEntries = cache(async ({isFavorite = false}: {isFavorite?: boolean} = {}) => {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const { data: entries, error: entriesError } = await supabase
+    let query = supabase
         .from('entries')
         .select('*')
         .eq('user_id', user?.id)
+    if (isFavorite) {
+        query = query.eq('is_favorite', true)
+    }
+    const { data: entries, error: entriesError } = await query
         .order('created_at', { ascending: false })
     if (entriesError) {
         console.error('Error fetching entries: ', entriesError)
