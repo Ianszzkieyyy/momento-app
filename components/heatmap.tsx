@@ -47,7 +47,7 @@ export default function Heatmap(
     }
 
     return (
-        <ScrollArea ref={scrollRef} className="w-screen md:w-lg lg:w-xl mt-4">
+        <ScrollArea ref={scrollRef} className="w-full">
             <div className='grid grid-flow-col gap-1' style={{gridTemplateRows: 'repeat(7, minmax(0, 1fr)'}}>
                 {calendarGrid.map((day, index)=>{
                     const activityCount = weightedDates[day] || 0;
